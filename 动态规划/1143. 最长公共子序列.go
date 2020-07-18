@@ -1,5 +1,7 @@
 package leadcode
 
+import "strconv"
+
 /**
 给定两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。
 
@@ -41,10 +43,10 @@ func max(x, y int) int {
 	return x
 }
 
-var longmaps map[int]map[int]int
+var longmaps map[string]int
 
 func longestCommonSubsequence_1(text1 string, text2 string) int {
-	longmaps = make(map[int]map[int]int, 0)
+	longmaps = make(map[string]int, 0)
 	m := len(text1) - 1
 	n := len(text2) - 1
 	return longest_helper(text1, text2, m, n)
@@ -55,7 +57,8 @@ func longest_helper(text1 string, text2 string, i, j int) int {
 	if i == -1 || j == -1 {
 		return 0
 	}
-	if v, ok := longmaps[i][j]; ok {
+	str:=strconv.Itoa(i)+"_"+strconv.Itoa(j)
+	if v, ok := longmaps[str]; ok {
 		return v
 	}
 	var t int
@@ -64,9 +67,8 @@ func longest_helper(text1 string, text2 string, i, j int) int {
 	} else {
 		t = max(longest_helper(text1, text2, i-1, j), longest_helper(text1, text2, i, j-1))
 	}
-	if _, ok := longmaps[i][j]; !ok {
-		longmaps[i][j] = t
+	if _, ok := longmaps[str]; !ok {
+		longmaps[str] = t
 	}
 	return t
-
 }
