@@ -46,5 +46,52 @@ func ladderLength(beginWord string, endWord string, wordList []string) int {
 }
 
 
+func ladderLength_1(beginWord string, endWord string, wordList []string) int {
+	wordset:=make(map[string]string,0)
+	for _,v:=range wordList{
+		wordset[v] = v
+	}
+	if _,ok:= wordset[endWord];!ok{
+		return 0
+	}
+	begin_word:= map[string]string{beginWord:beginWord}
+	end_word:= map[string]string{endWord:endWord}
+	visted:=make(map[string]string,0)
+	var c byte
+	dep:=1
 
+	for len(begin_word)!=0 && len(end_word)!=0{
 
+		if len(begin_word)>len(end_word){
+			begin_word,end_word = end_word,begin_word
+		}
+		next_wordl:=make(map[string]string,0)
+		for _,b_temp:=range begin_word{
+			ten:=[]byte(b_temp)
+			for j,_:= range ten{
+				origan := ten[j]
+				for c = 'a';c<='z';c++{
+					if c == origan {
+						continue
+					}
+					ten[j] = c
+					b_temp_str := string(ten)
+					if _,ok:= wordset[b_temp_str];ok{
+						if _,ok = end_word[b_temp_str];ok{
+							return dep+1
+						}
+						if _,ok = visted[b_temp_str];!ok{
+							next_wordl[b_temp_str] = b_temp_str
+							visted[b_temp_str] = b_temp_str
+						}
+					}
+				}
+				// 完成后返回原来的值
+				ten[j] = origan
+			}
+		}
+		begin_word = next_wordl
+		dep++
+	}
+	return 0
+}
