@@ -51,7 +51,7 @@ func (this *Trie) StartsWith(prefix string) bool {
 		if _,ok:=this.next[string(v)];!ok{
 			return false
 		}
-		this,_ = this.next[string(v)]
+		this = this.next[string(v)]
 	}
 	return true
 }
