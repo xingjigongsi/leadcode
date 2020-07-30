@@ -66,7 +66,11 @@ type Trie struct {
 }
 
 
-/** Initialize your data structure here. */
+/** Initialize // dfs
+var targets = [][]int{{-1,0},{0,-1},{1,0},{0,1}}
+var result int
+var w,h int
+var vistid [][]boolyour data structure here. */
 func Constructor() *Trie {
 	return &Trie{
 		isword:false,
