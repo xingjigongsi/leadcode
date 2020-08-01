@@ -21,6 +21,7 @@ func InitAvl(key int,value string) *avl{
 }
 
 /**
+RR
 * 右旋转      y               x
 ×           /  \			/ \
 ×			x  t1   =>      z   y
@@ -39,6 +40,7 @@ func (this *avl) rightRoute(node *avl) *avl{
 }
 
 /**
+ll
 *  左旋转
  */
  func (this *avl) leftRoute(node *avl) *avl{
@@ -69,21 +71,105 @@ func (this *avl) Add(key int,value string) *avl{
 	}
 	//更新节点高度
 	this.height = max(this.getNodeHeight(this.left),this.getNodeHeight(this.right))+1
+	// LL
 	if this.getHeightDifference(this)>1 && this.left!=nil && this.getHeightDifference(this.left)>=0{
 		return this.rightRoute(this)
 	}
-	if this.getHeightDifference(this)>1 && this.right!=nil && this.getHeightDifference(this.right)>=0{
+	// RR
+	if this.getHeightDifference(this)< -1 && this.right!=nil && this.getHeightDifference(this.right)<=0{
 		return this.leftRoute(this)
 	}
+	// LR
+	if this.getHeightDifference(this)>1 && this.left!=nil && this.getHeightDifference(this.left)<0{
+		this.left = this.left.leftRoute(this)
+		return this.rightRoute(this)
+	}
+	 //RL
+	 if this.getHeightDifference(this)>-1 && this.right!=nil && this.getHeightDifference(this.right)>0{
+	 	this.right = this.right.rightRoute(this)
+	 	return this.leftRoute(this)
+	 }
 	return this
 }
+
+ // 删除元素
+func (this *avl) RemoveAvl(key int) *avl{
+	if this == nil{
+		return nil
+	}
+	var node *avl
+	if this.key>key{
+		node = this.left.RemoveAvl(key)
+	}else if this.key<key{
+		node = this.right.RemoveAvl(key)
+	}else{
+		if this.left == nil{
+			rightnode:=this.right
+			this.right = nil
+			node = rightnode
+		} else if this.right == nil{
+			leftnode := this.left
+			this.left = nil
+			node = leftnode
+		}else{
+			minnode:= this.right.getMinNode()
+			minnode.right = this.right.RemoveAvl(minnode.key)
+			minnode.left = this.left
+			node = minnode
+		}
+	}
+	if node == nil{
+		return nil
+	}
+	// 树的平衡
+	//更新节点高度
+	node.height = max(node.getNodeHeight(node.left),node.getNodeHeight(node.right))+1
+	// LL
+	if this.getHeightDifference(node)>1 && node.left!=nil && this.getHeightDifference(node.left)>=0{
+		return this.rightRoute(node)
+	}
+	// RR
+	if this.getHeightDifference(node)< -1 && node.right!=nil && node.getHeightDifference(node.right)<=0{
+		return this.leftRoute(node)
+	}
+	// LR
+	if this.getHeightDifference(node)>1 && node.left!=nil && this.getHeightDifference(node.left)<0{
+		node.left = node.left.leftRoute(node)
+		return this.rightRoute(node)
+	}
+	//RL
+	if this.getHeightDifference(node)>-1 && node.right!=nil && this.getHeightDifference(node.right)>0{
+		node.right = node.right.rightRoute(node)
+		return this.leftRoute(node)
+	}
+	return node
+}
+
+ // 获取最小值
+func (this *avl) getMinNode() *avl{
+	if this==nil{
+		return this
+	}
+	return this.left.getMinNode()
+}
+
+ // 删除 以 node 节点最小的值
+ func (this *avl) removeMinNode() *avl{
+ 	if this.left == nil{
+ 		rightNode := this.right
+ 		this.right = nil
+ 		return rightNode
+	}
+ 	this.left = this.left.removeMinNode()
+ 	return this
+ }
 
 //判断是否是一个平衡二叉树
 func (this *avl) IsBlance() bool{
 	if this == nil{
 		return true
 	}
-	if this.getHeightDifference(this)>1{
+	if this.absgetHeightDifference(this)>1{
 		return false
 	}
 	return this.left.IsBlance() && this.right.IsBlance()
@@ -117,6 +203,10 @@ func (this *avl) getNodeHeight(node *avl) int{
 
 //左右高度差
 func (this *avl) getHeightDifference(node *avl) int {
+	return this.getNodeHeight(node.left) - this.getNodeHeight(node.right)
+}
+
+func (this *avl) absgetHeightDifference(node *avl) int {
 	return abs(this.getNodeHeight(node.left) - this.getNodeHeight(node.right))
 }
 
