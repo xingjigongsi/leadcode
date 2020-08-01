@@ -1,6 +1,7 @@
 package AVL
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -99,9 +100,11 @@ func (this *avl) RemoveAvl(key int) *avl{
 	}
 	var node *avl
 	if this.key>key{
-		node = this.left.RemoveAvl(key)
+		this.left = this.left.RemoveAvl(key)
+		node = this
 	}else if this.key<key{
-		node = this.right.RemoveAvl(key)
+		this.right = this.right.RemoveAvl(key)
+		node = this
 	}else{
 		if this.left == nil{
 			rightnode:=this.right
@@ -192,6 +195,14 @@ func (this *avl) helper(min int,max int) bool{
 	return this.left.helper(min,val) && this.right.helper(val,max)
 }
 
+ func (this *avl) ShowInoter(){
+ 	if this ==nil{
+ 		return
+	}
+ 	this.left.ShowInoter()
+ 	fmt.Println(this.key)
+ 	this.right.ShowInoter()
+ }
 
 // 获取节点的高度，包括处理节点为0
 func (this *avl) getNodeHeight(node *avl) int{
