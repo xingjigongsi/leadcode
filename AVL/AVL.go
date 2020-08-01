@@ -1,6 +1,8 @@
 package AVL
 
-import "math"
+import (
+	"math"
+)
 
 type avl struct {
 	key int
@@ -19,7 +21,12 @@ func InitAvl(key int,value string) *avl{
 }
 
 /**
-* 右旋转
+* 右旋转      y               x
+×           /  \			/ \
+×			x  t1   =>      z   y
+*                              / \
+*          / \                t3  t1
+*		  z  t3
 */
 func (this *avl) rightRoute(node *avl) *avl{
 	x:=node.left
@@ -32,11 +39,11 @@ func (this *avl) rightRoute(node *avl) *avl{
 }
 
 /**
-*
+*  左旋转
  */
  func (this *avl) leftRoute(node *avl) *avl{
  	x:=node.right
- 	t3:=x.right
+ 	t3:=x.left
  	x.left  = node
  	node.right = t3
  	node.height = max(this.getNodeHeight(node.left),this.getNodeHeight(node.right))+1
@@ -62,10 +69,10 @@ func (this *avl) Add(key int,value string) *avl{
 	}
 	//更新节点高度
 	this.height = max(this.getNodeHeight(this.left),this.getNodeHeight(this.right))+1
-	if this.getHeightDifference(this)>1 && this.getHeightDifference(this.left)>=0{
+	if this.getHeightDifference(this)>1 && this.left!=nil && this.getHeightDifference(this.left)>=0{
 		return this.rightRoute(this)
 	}
-	if this.getHeightDifference(this)>1 && this.getHeightDifference(this.right)>=0{
+	if this.getHeightDifference(this)>1 && this.right!=nil && this.getHeightDifference(this.right)>=0{
 		return this.leftRoute(this)
 	}
 	return this
@@ -99,9 +106,6 @@ func (this *avl) helper(min int,max int) bool{
 	return this.left.helper(min,val) && this.right.helper(val,max)
 }
 
-func (this *avl) Getkey() int{
-	return this.key
-}
 
 // 获取节点的高度，包括处理节点为0
 func (this *avl) getNodeHeight(node *avl) int{
@@ -113,10 +117,20 @@ func (this *avl) getNodeHeight(node *avl) int{
 
 //左右高度差
 func (this *avl) getHeightDifference(node *avl) int {
-	if node==nil{
-		return  0
-	}
 	return abs(this.getNodeHeight(node.left) - this.getNodeHeight(node.right))
+}
+
+
+func (this *avl) Getkey() int{
+	return this.key
+}
+
+func (this *avl) GetLeft() *avl{
+	return this.left
+}
+
+func (this *avl) GetRight() *avl{
+	return this.right
 }
 
 // 最大值
