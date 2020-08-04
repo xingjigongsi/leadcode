@@ -81,7 +81,7 @@ func sortedListToBST_helper(l,r int) *TreeNode{
 	}
 	mid:=(l+r)/2
 	node:= &TreeNode{Val:data[mid]}
-	if l==mid{
+	if l==r{
 		return node
 	}
 	node.Left = sortedListToBST_helper(r,mid-1)
