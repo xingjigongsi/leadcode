@@ -1,10 +1,53 @@
 package link
 
 import (
-	"fmt"
 	"strconv"
 )
 
+
+type LRUCache struct {
+	doubleList *DoubleList
+	nodemap map[int]*Node
+}
+
+
+func Constructor(capacity int) *LRUCache {
+	return &LRUCache{
+		doubleList:CreateDoubleList(capacity),
+		nodemap:make(map[int]*Node,0),
+	}
+}
+
+
+func (this *LRUCache) Get(key int) int {
+	if v,ok:=this.nodemap[key];ok{
+		this.doubleList.RemoveNode(v)
+		this.doubleList.Addfirst(v)
+		return v.value
+	}
+	return -1
+}
+
+
+func (this *LRUCache) Put(key int, value int)  {
+	if v,ok:=this.nodemap[key];ok{
+		this.doubleList.RemoveNode(v)
+		v.value = value
+		this.doubleList.Addfirst(v)
+	}else{
+		node:= CreateNode(key,value)
+		if this.doubleList.size>=this.doubleList.capsize{
+			node1:=this.doubleList.RemoveTail()
+			delete(this.nodemap,node1.key)
+		}
+		this.doubleList.Addfirst(node)
+		this.nodemap[key] = node
+	}
+}
+
+
+
+//双向链表
 type Node struct {
 	key int
 	value int
@@ -70,25 +113,27 @@ func (this *DoubleList) AddLast(node *Node) *Node{
 }
 
 // 任意节点删除
-func (this *DoubleList) RemoveNode(node *Node){
+func (this *DoubleList) RemoveNode(node *Node) *Node{
 	if node == nil{
 		this.tail = nil
 	}else if node == this.head{
 		// 删除头部
+		return this.RemoveHead()
 	}else if node == this.tail{
 		// 删除尾部
+		return this.RemoveTail()
 	}else{
 		// 删除任意节点
 		node.next.pre = node.pre
 		node.pre.next = node.next
 		this.size--
+		return node
 	}
-
+	return node
 }
 
 //删除头部
 func (this *DoubleList) RemoveHead() *Node{
-	fmt.Println("fdfddf")
 	if this.head == nil{
 		return nil
 	}
@@ -121,9 +166,10 @@ func (this *DoubleList) RemoveTail() *Node{
 	return node
 }
 
-func (this *DoubleList) String() string{
+
+func (this *LRUCache) String() string{
 	line:=""
-	p:=this.head
+	p:=this.doubleList.head
 	for p!=nil{
 		line += strconv.Itoa(p.key)+"->"
 		p = p.next
@@ -133,5 +179,3 @@ func (this *DoubleList) String() string{
 	}
 	return line
 }
-
-
